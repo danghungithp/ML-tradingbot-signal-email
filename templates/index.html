@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Signal Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white text-center py-3">
+        <h1>Trading Signal Bot</h1>
+    </header>
+
+    <!-- Body -->
+    <div class="container my-4">
+        <!-- Phần đầu tiên: Biểu đồ giao dịch -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-center">Biểu đồ giao dịch</h3>
+                <img src="data:image/png;base64,{{ chart_data }}" alt="Trading Chart" class="img-fluid">
+            </div>
+        </div>
+
+        <!-- Phần khung dưới: Danh sách tín hiệu -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-center">Danh sách tín hiệu</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Tín hiệu</th>
+                            <th>Giá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for signal in signals %}
+                        <tr>
+                            <td>{{ signal.time }}</td>
+                            <td>{{ signal.type }}</td>
+                            <td>{{ signal.price }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">Không có tín hiệu nào</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Phần khung kế tiếp: Nhập email -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-center">Đăng ký nhận tín hiệu qua email</h3>
+                <form id="subscribe-form">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email của bạn</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email của bạn" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Đăng ký</button>
+                </form>
+                <div id="subscribe-message" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2025 Trading Signal Bot. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Xử lý form đăng ký email
+        $("#subscribe-form").on("submit", function(e) {
+            e.preventDefault();
+            const email = $("#email").val();
+            $.post("/subscribe", { email: email }, function(response) {
+                $("#subscribe-message").text(response.message).addClass("text-success");
+            }).fail(function(response) {
+                $("#subscribe-message").text(response.responseJSON.message).addClass("text-danger");
+            });
+        });
+    </script>
+</body>
+</html>
